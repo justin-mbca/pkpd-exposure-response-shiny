@@ -9,10 +9,10 @@ library(data.table)
 library(survival)
 
 # Load data
-dm <- fread("../data_adam/dm_clean.csv")
-exposure <- fread("../data_adam/exposure.csv")
-logit_summary <- fread("../data_adam/logit_summary.csv")
-cox_summary <- fread("../data_adam/cox_summary.csv")
+dm <- fread("data_adam/dm_clean.csv")
+exposure <- fread("data_adam/exposure_full.csv")
+logit_summary <- fread("data_adam/logit_summary.csv")
+cox_summary <- fread("data_adam/cox_summary.csv")
 
 ui <- fluidPage(
   titlePanel("Clinical PK/PD Exposure-Response Analysis Demo"),
@@ -60,11 +60,8 @@ server <- function(input, output, session) {
   output$km_curve <- renderPlot({
     exp_data <- filtered_exposure() %>% mutate(EXP_Q = ntile(AUC, 4))
     fit <- survfit(Surv(SURV_TIME, STATUS) ~ EXP_Q, data = exp_data)
-    ggsurvplot <- function(fit, data) {
-      ggsurv <- ggsurvplot(fit, data = data, risk.table = TRUE)
-      print(ggsurv$plot)
-    }
-    ggsurvplot(fit, exp_data)
+    plot(fit, col = 1:4, lwd = 2, xlab = "Time", ylab = "Survival Probability", main = "Kaplan-Meier Curve by Exposure Quartile")
+    legend("bottomleft", legend = paste("Quartile", 1:4), col = 1:4, lwd = 2)
   })
 }
 
