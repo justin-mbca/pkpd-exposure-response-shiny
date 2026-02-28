@@ -1,0 +1,73 @@
+---
+title: "Clinical PK/PD Exposure-Response Analysis Demo"
+author: "Senior Clinical PK/PD R Developer"
+date: "2026-02-28"
+format:
+  html: default
+---
+
+# Objectives
+- Simulate clinical trial PK concentration-time data
+- Generate SDTM-like datasets (DM, EX, PC, LB)
+- Create ADaM-like derived dataset for exposure metrics
+- Perform exposure-response analysis (logistic regression + Cox model)
+- Generate regulatory-style Tables, Listings, and Figures (TLFs)
+- Include automated QC validation checks
+- Build an interactive Shiny dashboard for visualization
+
+# Methods
+## Data Simulation
+```{r}
+source("../R/data_simulation.R")
+```
+
+## Data Cleaning & QC
+```{r}
+source("../R/data_cleaning.R")
+source("../R/qc_validation.R")
+```
+
+## Exposure Derivation
+```{r}
+source("../R/derivations_exposure.R")
+```
+
+## Modeling
+```{r}
+source("../R/modeling_exposure_response.R")
+```
+
+## TLF Generation
+```{r}
+source("../R/tlf_generation.R")
+```
+
+# Results
+## Tables
+```{r}
+# Display logistic regression and Cox model tables
+htmltools::includeHTML("../report/logit_table.html")
+htmltools::includeHTML("../report/cox_table.html")
+```
+
+## Figures
+```{r}
+knitr::include_graphics("../report/boxplot_cmax.png")
+knitr::include_graphics("../report/exposure_response_scatter.png")
+knitr::include_graphics("../report/km_curve.png")
+```
+
+## QC Results
+```{r}
+qc_missing_exposure <- fread("../report/qc_missing_exposure.csv")
+qc_outliers <- fread("../report/qc_outliers.csv")
+qc_missing_exposure
+qc_outliers
+```
+
+# Discussion
+- Results demonstrate a reproducible, sponsor-grade PK/PD workflow.
+- All code is modular, documented, and suitable for regulatory submission.
+
+# Shiny Dashboard
+See app/app.R for interactive exploration.
