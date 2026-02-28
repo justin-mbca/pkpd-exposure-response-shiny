@@ -3,6 +3,9 @@
 ## Overview
 This project demonstrates a sponsor-grade clinical PK/PD analysis workflow, including simulation, SDTM/ADaM dataset generation, exposure-response modeling, regulatory-style TLFs, automated QC, and an interactive Shiny dashboard.
 
+## Published Shiny App
+Access the live dashboard here: [https://justin-zhang.shinyapps.io/ClinicalPKPDExposureResponse](https://justin-zhang.shinyapps.io/ClinicalPKPDExposureResponse)
+
 ## Objectives
 - Simulate clinical trial PK concentration-time data
 - Generate SDTM-like datasets (DM, EX, PC, LB)
