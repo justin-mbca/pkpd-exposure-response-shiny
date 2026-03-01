@@ -1,10 +1,14 @@
 ---
 title: "Clinical PK/PD Exposure-Response Analysis Demo"
-author: "Senior Clinical PK/PD R Developer"
+author: "Justin Zhang"
 date: "2026-02-28"
 format:
   html: default
 ---
+
+
+# Project Overview
+This project demonstrates a sponsor-grade, end-to-end clinical PK/PD analysis workflow using R. It covers data simulation, cleaning, derivation of exposure metrics, modeling of exposure-response relationships, regulatory-style TLF generation, automated QC, and interactive visualization via a Shiny dashboard. All code is modular, CDISC-compliant, and suitable for regulatory submission or stakeholder review.
 
 # Objectives
 - Simulate clinical trial PK concentration-time data
@@ -17,35 +21,54 @@ format:
 
 # Methods
 ## Data Simulation
+Clinical trial data are simulated for 200 subjects across multiple dose groups and time points. SDTM-like datasets (DM, EX, PC, LB) are generated to mimic real-world clinical trial structure.
 ```{r}
-source("../R/data_simulation.R")
+library(data.table)
+dm <- fread("../data_sdtm/dm.csv")
+ex <- fread("../data_sdtm/ex.csv")
+pc <- fread("../data_sdtm/pc.csv")
+lb <- fread("../data_sdtm/lb.csv")
 ```
 
 ## Data Cleaning & QC
+Raw SDTM datasets are cleaned and validated for missing values, outliers, and consistency. ADaM-like datasets are created for analysis-ready data.
 ```{r}
-source("../R/data_cleaning.R")
-source("../R/qc_validation.R")
+dm_clean <- fread("../data_adam/dm_clean.csv")
+ex_clean <- fread("../data_adam/ex_clean.csv")
+lb_clean <- fread("../data_adam/lb_clean.csv")
+pc_clean <- fread("../data_adam/pc_clean.csv")
 ```
 
 ## Exposure Derivation
+PK metrics such as Cmax and AUC are derived for each subject using cleaned concentration-time data.
 ```{r}
-source("../R/derivations_exposure.R")
+exposure <- fread("../data_adam/exposure_full.csv")
 ```
 
 ## Modeling
+Exposure-response relationships are analyzed using logistic regression and Cox proportional hazards models. Model outputs are saved for reporting.
 ```{r}
-source("../R/modeling_exposure_response.R")
+# Read modeling results
+logit_summary <- fread("../data_adam/logit_summary.csv")
+cox_summary <- fread("../data_adam/cox_summary.csv")
+logit_summary
+cox_summary
 ```
 
 ## TLF Generation
-```{r}
-source("../R/tlf_generation.R")
+Regulatory-style Tables, Listings, and Figures (TLFs) are generated to summarize key results for submission and review.
+```{r, fig.width=8, fig.height=6}
+# Read TLF outputs (tables and figures)
+knitr::include_graphics("../report/boxplot_cmax.png")
+knitr::include_graphics("../report/exposure_response_scatter.png")
+knitr::include_graphics("../report/km_curve.png")
 ```
 
 # Results
 ## Tables
 ```{r}
 # Display logistic regression and Cox model tables
+# Note: If you see a warning about includeHTML and complete HTML documents, use tags$iframe() for embedding in Shiny apps. For static reports, you may display summary tables as images or markdown.
 htmltools::includeHTML("../report/logit_table.html")
 htmltools::includeHTML("../report/cox_table.html")
 ```
@@ -55,9 +78,13 @@ htmltools::includeHTML("../report/cox_table.html")
 knitr::include_graphics("../report/boxplot_cmax.png")
 knitr::include_graphics("../report/exposure_response_scatter.png")
 knitr::include_graphics("../report/km_curve.png")
+# Safety TLFs
+knitr::include_graphics("../report/ae_rate_dose.png")
+knitr::include_graphics("../report/ae_rate_expq.png")
 ```
 
 ## QC Results
+Automated QC checks are performed to identify missing values and outliers in exposure data. Results are summarized below:
 ```{r}
 qc_missing_exposure <- fread("../report/qc_missing_exposure.csv")
 qc_outliers <- fread("../report/qc_outliers.csv")
@@ -66,8 +93,11 @@ qc_outliers
 ```
 
 # Discussion
-- Results demonstrate a reproducible, sponsor-grade PK/PD workflow.
-- All code is modular, documented, and suitable for regulatory submission.
+
+# Discussion
+This project demonstrates a reproducible, sponsor-grade PK/PD workflow. All code is modular, CDISC-compliant, and suitable for regulatory submission. The workflow covers simulation, cleaning, derivation, modeling, TLF generation, QC, and interactive visualization. Automated QC ensures data integrity, and the Shiny dashboard enables dynamic exploration and communication of results. The approach is extensible for real-world clinical studies and regulatory deliverables.
 
 # Shiny Dashboard
-See app/app.R for interactive exploration.
+
+# Shiny Dashboard
+Explore the interactive dashboard at: [https://justin-zhang.shinyapps.io/ClinicalPKPDExposureResponse/](https://justin-zhang.shinyapps.io/ClinicalPKPDExposureResponse/)

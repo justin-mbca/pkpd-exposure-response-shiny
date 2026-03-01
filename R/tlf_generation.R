@@ -8,6 +8,9 @@ library(ggplot2)
 library(gt)
 library(survival)
 
+# Safety analysis
+ae <- fread("data_sdtm/ae.csv")
+
 exposure <- fread("data_adam/exposure_full.csv")
 dm <- fread("data_adam/dm_clean.csv")
 logit_summary <- fread("data_adam/logit_summary.csv")
@@ -55,6 +58,21 @@ dev.off()
 
 # Forest plot of covariates
 # ...existing code...
+
+# Safety TLF: AE rate by dose group
+ae_rate_dose <- ae %>% group_by(DOSE) %>% summarise(AE_rate = mean(AE_YN))
+ggplot(ae_rate_dose, aes(x = factor(DOSE), y = AE_rate)) +
+  geom_bar(stat = "identity", fill = "#e41a1c") +
+  labs(title = "Adverse Event Rate by Dose Group", x = "Dose", y = "AE Rate")
+ggsave("report/ae_rate_dose.png")
+
+# Safety TLF: AE rate by exposure quartile
+exposure_ae <- left_join(exposure, ae, by = "USUBJID") %>% mutate(EXP_Q = ntile(AUC, 4))
+ae_rate_expq <- exposure_ae %>% group_by(EXP_Q) %>% summarise(AE_rate = mean(AE_YN))
+ggplot(ae_rate_expq, aes(x = factor(EXP_Q), y = AE_rate)) +
+  geom_bar(stat = "identity", fill = "#377eb8") +
+  labs(title = "Adverse Event Rate by Exposure Quartile", x = "Exposure Quartile", y = "AE Rate")
+ggsave("report/ae_rate_expq.png")
 
 # Table: Logistic regression summary
 gt(logit_summary) %>%
