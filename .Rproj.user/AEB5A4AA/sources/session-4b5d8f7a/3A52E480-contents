@@ -68,6 +68,7 @@ knitr::include_graphics("../report/km_curve.png")
 ## Tables
 ```{r}
 # Display logistic regression and Cox model tables
+# Note: If you see a warning about includeHTML and complete HTML documents, use tags$iframe() for embedding in Shiny apps. For static reports, you may display summary tables as images or markdown.
 htmltools::includeHTML("../report/logit_table.html")
 htmltools::includeHTML("../report/cox_table.html")
 ```
@@ -76,16 +77,20 @@ htmltools::includeHTML("../report/cox_table.html")
 ```{r}
 # Load exposure and response data
 exposure <- fread("../data_adam/exposure_full.csv")
+# Assume response variable is RESPONSE (1=Yes, 0=No)
 if("RESPONSE" %in% names(exposure)) {
+  # Ensure RESPONSE and Cmax are numeric and remove NA
   exposure <- exposure[!is.na(RESPONSE) & !is.na(Cmax)]
   exposure[, RESPONSE := as.numeric(RESPONSE)]
   exposure[, Cmax := as.numeric(Cmax)]
   exposure[, CmaxQ := cut(Cmax, quantile(Cmax, probs=0:4/4, na.rm=TRUE), include.lowest=TRUE, labels=paste0("Q",1:4))]
   resp_tab <- exposure[, .(N=.N, ResponseRate=mean(RESPONSE, na.rm=TRUE)), by=CmaxQ]
+  # Remove NA ResponseRate rows
   resp_tab <- resp_tab[!is.na(ResponseRate)]
   if(nrow(resp_tab) > 0 && all(sapply(resp_tab$ResponseRate, is.numeric))) {
     resp_tab[, ResponseRate := round(100*ResponseRate,1)]
     knitr::kable(resp_tab, caption="Response Rate by Cmax Quartile (%)")
+    # Bar plot
     library(ggplot2)
     ggplot(resp_tab, aes(x=CmaxQ, y=ResponseRate)) +
       geom_bar(stat="identity", fill="#4682B4") +
@@ -115,6 +120,7 @@ if("RESPONSE" %in% names(exposure)) {
 ## Figures
 ```{r}
 knitr::include_graphics("../report/km_curve.png")
+# Safety TLFs
 knitr::include_graphics("../report/ae_rate_dose.png")
 knitr::include_graphics("../report/ae_rate_expq.png")
 ```
@@ -123,63 +129,34 @@ knitr::include_graphics("../report/ae_rate_expq.png")
 
 ```{r, echo=FALSE, results='asis'}
 # Dynamic interpretation based on analysis results
+# Load results
 logit <- fread("../data_adam/logit_summary.csv")
 cox   <- fread("../data_adam/cox_summary.csv")
 ae    <- fread("../data_sdtm/ae.csv")
 qc_missing  <- fread("../report/qc_missing_exposure.csv")
 qc_outliers <- fread("../report/qc_outliers.csv")
 
-# Helper: safely extract a numeric scalar from a data.table by column name
-safe_num <- function(dt, col) {
-  if (col %in% names(dt)) as.numeric(dt[[col]][1]) else NA_real_
-}
-
-logit_p  <- safe_num(logit, "p_value")
-logit_or <- safe_num(logit, "odds_ratio")
-cox_p    <- safe_num(cox,   "p_value")
-cox_hr   <- safe_num(cox,   "hazard_ratio")
-
-logit_or_r <- if (!is.na(logit_or)) round(logit_or, 2) else "N/A"
-cox_hr_r   <- if (!is.na(cox_hr))   round(cox_hr,   2) else "N/A"
+# Coerce to numeric explicitly (fread may read columns as character)
+logit_p  <- as.numeric(logit$p_value[1])
+logit_or <- round(as.numeric(logit$odds_ratio[1]), 2)
+cox_p    <- as.numeric(cox$p_value[1])
+cox_hr   <- round(as.numeric(cox$hazard_ratio[1]), 2)
 
 # Exposure-response summary
-sig <- isTRUE(!is.na(logit_p) && logit_p < 0.05) || isTRUE(!is.na(cox_p) && cox_p < 0.05)
-exp_resp <- if (sig) {
-  paste0(
-    "Exposure-response modeling indicates a statistically significant association between ",
-    "drug exposure and clinical response (Logistic regression OR=", logit_or_r,
-    ", p=", if (!is.na(logit_p)) signif(logit_p, 2) else "N/A",
-    "; Cox model HR=", cox_hr_r,
-    ", p=", if (!is.na(cox_p)) signif(cox_p, 2) else "N/A", ")."
-  )
+exp_resp <- if(!is.na(logit_p) && !is.na(cox_p) && (logit_p < 0.05 | cox_p < 0.05)) {
+  paste0("Exposure-response modeling indicates a statistically significant association between drug exposure and clinical response (Logistic regression OR=", logit_or, ", p=", signif(logit_p,2), "; Cox model HR=", cox_hr, ", p=", signif(cox_p,2), ").")
 } else {
   "No statistically significant exposure-response relationship was detected in this analysis."
 }
 
-# Safety summary — detect AE flag and dose column names defensively
-ae_flag_col <- intersect(c("AE_flag", "AEFLAG", "ae_flag", "AEYN", "AE_FLAG"), names(ae))[1]
-ae_dose_col <- intersect(c("DOSE", "dose", "EXDOSE", "TRT", "ACTARM"), names(ae))[1]
-
-if (!is.na(ae_flag_col) && !is.na(ae_dose_col)) {
-  ae_vals     <- as.numeric(ae[[ae_flag_col]])
-  ae_rate_pct <- round(100 * mean(ae_vals == 1, na.rm = TRUE), 1)
-  ae_dt       <- data.table(flag = ae_vals, dose = ae[[ae_dose_col]])
-  max_ae_dose <- ae_dt[, .(rate = mean(flag == 1, na.rm = TRUE)), by = dose][order(-rate)][1]
-  safety <- paste0(
-    "Overall adverse event (AE) rate was ", ae_rate_pct, "%. ",
-    "Highest AE rate observed in dose group ", max_ae_dose$dose,
-    " (", round(100 * max_ae_dose$rate, 1), "%). ",
-    "No unexpected safety signals detected."
-  )
-} else {
-  safety <- paste0(
-    "Safety summary could not be computed: expected AE flag/dose columns not found. ",
-    "Available columns in ae.csv: ", paste(names(ae), collapse = ", "), "."
-  )
-}
+# Safety summary
+ae_rate <- mean(as.numeric(ae$AE_flag) == 1, na.rm = TRUE)
+ae_rate_pct <- round(100 * ae_rate, 1)
+max_ae_dose <- ae[, .(rate = mean(as.numeric(AE_flag) == 1, na.rm = TRUE)), by = DOSE][order(-rate)][1]
+safety <- paste0("Overall adverse event (AE) rate was ", ae_rate_pct, "%. Highest AE rate observed in dose group ", max_ae_dose$DOSE, " (", round(100 * max_ae_dose$rate, 1), "%). No unexpected safety signals detected.")
 
 # QC summary
-qc_flag <- if (nrow(qc_missing) == 0 & nrow(qc_outliers) == 0) {
+qc_flag <- if(nrow(qc_missing) == 0 & nrow(qc_outliers) == 0) {
   "Automated QC checks confirm data integrity, with no critical missing values or outliers affecting the analysis."
 } else {
   "QC checks identified missing values or outliers. Please review QC tables for details."

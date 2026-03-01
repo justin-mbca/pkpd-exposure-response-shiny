@@ -1,0 +1,26 @@
+{
+    "id": "2C563D05",
+    "path": "~/pkpd-exposure-response-shiny/report/analysis_report.qmd",
+    "project_path": "report/analysis_report.qmd",
+    "type": "quarto_markdown",
+    "hash": "2418961672",
+    "contents": "",
+    "dirty": false,
+    "created": 1772401192093.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "209,0",
+        "scrollLine": "197"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1772406676,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1772406676287,
+    "read_only": false,
+    "read_only_alternatives": []
+}
