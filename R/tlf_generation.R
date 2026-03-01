@@ -32,10 +32,24 @@ ggsave("report/exposure_response_scatter.png")
 # Kaplan-Meier curve by exposure quartile
 exposure_dm <- exposure_dm %>% mutate(EXP_Q = ntile(AUC, 4))
 km_fit <- survfit(Surv(SURV_TIME, STATUS) ~ EXP_Q, data = exposure_dm)
-# If ggsurvplot is not available, use base plot
-png("report/km_curve.png")
-plot(km_fit, xlab = "Time", ylab = "Survival Probability", main = "Kaplan-Meier by Exposure Quartile", col = 1:4)
-legend("topright", legend = paste("Q", 1:4), col = 1:4, lty = 1)
+# Save a larger PNG (e.g., 1200x900 pixels)
+png("report/km_curve.png", width = 1200, height = 900)
+plot(km_fit,
+  xlab = "Time",
+  ylab = "Survival Probability",
+  main = "Kaplan-Meier by Exposure Quartile",
+  col = 1:4,
+  cex.lab = 2.2,    # Axis label size
+  cex.axis = 1.8,   # Axis tick size
+  cex.main = 2.5,   # Title size
+  lwd = 3           # Line width
+)
+legend("topright",
+    legend = paste("Exposure Quartile Q", 1:4),
+    col = 1:4,
+    lty = 1,
+    cex = 2.0       # Legend font size
+)
 dev.off()
 
 # Forest plot of covariates
