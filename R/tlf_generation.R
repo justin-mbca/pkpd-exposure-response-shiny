@@ -34,6 +34,7 @@ exposure_dm <- exposure_dm %>% mutate(EXP_Q = ntile(AUC, 4))
 km_fit <- survfit(Surv(SURV_TIME, STATUS) ~ EXP_Q, data = exposure_dm)
 # Save a larger PNG (e.g., 1200x900 pixels)
 png("report/km_curve.png", width = 1200, height = 900)
+par(mar = c(5.1, 6, 4.1, 2.1)) # Increase left margin for Y label
 plot(km_fit,
   xlab = "Time",
   ylab = "Survival Probability",
