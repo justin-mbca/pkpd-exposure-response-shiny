@@ -9,10 +9,10 @@ library(data.table)
 library(survival)
 
 # Load data
-dm <- fread("app/data_adam/dm_clean.csv")
-exposure <- fread("app/data_adam/exposure_full.csv")
-logit_summary <- fread("app/data_adam/logit_summary.csv")
-cox_summary <- fread("app/data_adam/cox_summary.csv")
+dm <- fread("data_adam/dm_clean.csv")
+exposure <- fread("data_adam/exposure_full.csv")
+logit_summary <- fread("data_adam/logit_summary.csv")
+cox_summary <- fread("data_adam/cox_summary.csv")
 
 ui <- fluidPage(
   titlePanel("Clinical PK/PD Exposure-Response Analysis Demo"),
@@ -21,8 +21,8 @@ ui <- fluidPage(
       width = 3,
       wellPanel(
         selectInput("dose", "Dose Group", choices = unique(dm$DOSE), selected = unique(dm$DOSE), multiple = TRUE),
-        sliderInput("cmax", "Cmax Range", min = min(exposure$Cmax), max = max(exposure$Cmax), value = range(exposure$Cmax)),
-        sliderInput("auc", "AUC Range", min = min(exposure$AUC), max = max(exposure$AUC), value = range(exposure$AUC)),
+        sliderInput("cmax", "Cmax Range", min = floor(min(exposure$Cmax)), max = ceiling(max(exposure$Cmax)), value = c(floor(min(exposure$Cmax)), ceiling(max(exposure$Cmax)))),
+        sliderInput("auc", "AUC Range", min = floor(min(exposure$AUC)), max = ceiling(max(exposure$AUC)), value = c(floor(min(exposure$AUC)), ceiling(max(exposure$AUC)))),
         selectInput("subject", "Select Subject for AUC Plot", choices = unique(dm$USUBJID), selected = unique(dm$USUBJID)[1]),
         tags$hr(),
         tags$b("Variable Definitions and Logic:"),
@@ -141,9 +141,9 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-      ae <- fread("app/data_sdtm/ae.csv")
-      qc_missing <- fread("report/qc_missing_exposure.csv")
-      qc_outliers <- fread("report/qc_outliers.csv")
+      ae <- fread("data_sdtm/ae.csv")
+      qc_missing <- fread("data_adam/qc_missing_exposure.csv")
+      qc_outliers <- fread("../report/qc_outliers.csv")
       # Safety AE rate by dose
       output$ae_rate_dose <- renderPlot({
         ae_rate <- ae[, .(AE_Rate = mean(AE_YN == 1, na.rm = TRUE)), by = DOSE]
@@ -171,7 +171,7 @@ server <- function(input, output, session) {
       output$qc_outliers <- DT::renderDataTable({
         qc_outliers
       })
-    pc <- fread("app/data_adam/pc_clean.csv")
+    pc <- fread("data_adam/pc_clean.csv")
     output$auc_plot <- renderPlot({
       subj_data <- pc[USUBJID == input$subject]
       ggplot(subj_data, aes(x = TIME, y = CONC)) +
