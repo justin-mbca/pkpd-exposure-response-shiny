@@ -143,7 +143,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
       ae <- fread("data_sdtm/ae.csv")
       qc_missing <- fread("data_adam/qc_missing_exposure.csv")
-      qc_outliers <- fread("../report/qc_outliers.csv")
+      qc_outliers <- fread("data_adam/qc_outliers.csv")
       # Safety AE rate by dose
       output$ae_rate_dose <- renderPlot({
         ae_rate <- ae[, .(AE_Rate = mean(AE_YN == 1, na.rm = TRUE)), by = DOSE]
