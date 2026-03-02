@@ -5,7 +5,7 @@
 library(tidyverse)
 library(data.table)
 
-pc <- fread("data_adam/pc_clean.csv")
+pc <- fread("app/data_adam/pc_clean.csv")
 
 # Derive Cmax and AUC per subject
 exposure <- pc %>%
@@ -15,6 +15,6 @@ exposure <- pc %>%
     AUC = sum(diff(TIME) * (head(CONC, -1) + tail(CONC, -1))/2)
   )
 
-fwrite(exposure, "data_adam/exposure.csv")
+fwrite(exposure, "app/data_adam/exposure.csv")
 
 # End of script

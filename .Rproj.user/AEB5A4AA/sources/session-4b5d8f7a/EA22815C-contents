@@ -9,10 +9,10 @@ library(data.table)
 library(survival)
 
 # Load data
-dm <- fread("data_adam/dm_clean.csv")
-exposure <- fread("data_adam/exposure_full.csv")
-logit_summary <- fread("data_adam/logit_summary.csv")
-cox_summary <- fread("data_adam/cox_summary.csv")
+dm <- fread("app/data_adam/dm_clean.csv")
+exposure <- fread("app/data_adam/exposure_full.csv")
+logit_summary <- fread("app/data_adam/logit_summary.csv")
+cox_summary <- fread("app/data_adam/cox_summary.csv")
 
 ui <- fluidPage(
   titlePanel("Clinical PK/PD Exposure-Response Analysis Demo"),
@@ -171,7 +171,7 @@ server <- function(input, output, session) {
       output$qc_outliers <- DT::renderDataTable({
         qc_outliers
       })
-    pc <- fread("data_adam/pc_clean.csv")
+    pc <- fread("app/data_adam/pc_clean.csv")
     output$auc_plot <- renderPlot({
       subj_data <- pc[USUBJID == input$subject]
       ggplot(subj_data, aes(x = TIME, y = CONC)) +

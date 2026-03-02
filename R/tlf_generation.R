@@ -11,10 +11,13 @@ library(survival)
 # Safety analysis
 ae <- fread("app/data_sdtm/ae.csv")
 
-exposure <- fread("data_adam/exposure_full.csv")
 dm <- fread("data_adam/dm_clean.csv")
 logit_summary <- fread("data_adam/logit_summary.csv")
 cox_summary <- fread("data_adam/cox_summary.csv")
+exposure <- fread("app/data_adam/exposure_full.csv")
+dm <- fread("app/data_adam/dm_clean.csv")
+logit_summary <- fread("app/data_adam/logit_summary.csv")
+cox_summary <- fread("app/data_adam/cox_summary.csv")
 
 # Concentration-time plot
 # ...existing code...

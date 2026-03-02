@@ -6,8 +6,9 @@ library(tidyverse)
 library(data.table)
 
 # Load datasets
-exposure <- fread("data_adam/exposure.csv")
 dm <- fread("data_adam/dm_clean.csv")
+exposure <- fread("app/data_adam/exposure.csv")
+dm <- fread("app/data_adam/dm_clean.csv")
 
 # Check missing values
 qc_missing <- function(df) {

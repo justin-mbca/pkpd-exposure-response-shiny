@@ -10,6 +10,8 @@ format:
 # Project Overview
 This project demonstrates a sponsor-grade, end-to-end clinical PK/PD analysis workflow using R. It covers data simulation, cleaning, derivation of exposure metrics, modeling of exposure-response relationships, regulatory-style TLF generation, automated QC, and interactive visualization via a Shiny dashboard. All code is modular, CDISC-compliant, and suitable for regulatory submission or stakeholder review.
 
+Deployed Shiny dashboard: [https://www.shinyapps.io](https://www.shinyapps.io)
+
 # Objectives
 - Simulate clinical trial PK concentration-time data
 - Generate SDTM-like datasets (DM, EX, PC, LB)
@@ -24,10 +26,10 @@ This project demonstrates a sponsor-grade, end-to-end clinical PK/PD analysis wo
 Clinical trial data are simulated for 200 subjects across multiple dose groups and time points. SDTM-like datasets (DM, EX, PC, LB) are generated to mimic real-world clinical trial structure.
 ```{r}
 library(data.table)
-dm <- fread("../data_sdtm/dm.csv")
-ex <- fread("../data_sdtm/ex.csv")
-pc <- fread("../data_sdtm/pc.csv")
-lb <- fread("../data_sdtm/lb.csv")
+dm <- fread("../app/data_sdtm/dm.csv")
+ex <- fread("../app/data_sdtm/ex.csv")
+pc <- fread("../app/data_sdtm/pc.csv")
+lb <- fread("../app/data_sdtm/lb.csv")
 ```
 
 ## Data Cleaning & QC

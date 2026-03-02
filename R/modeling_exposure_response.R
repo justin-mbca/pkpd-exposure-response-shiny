@@ -7,8 +7,9 @@ library(data.table)
 library(survival)
 library(broom)
 
-exposure <- fread("data_adam/exposure.csv")
 dm <- fread("data_adam/dm_clean.csv")
+exposure <- fread("app/data_adam/exposure.csv")
+dm <- fread("app/data_adam/dm_clean.csv")
 
 # Simulate binary response and survival time
 set.seed(2026)
@@ -27,10 +28,11 @@ logit_summary <- tidy(logit_mod)
 cox_mod <- coxph(Surv(SURV_TIME, STATUS) ~ AUC + AGE + SEX, data = left_join(exposure, dm, by = "USUBJID"))
 cox_summary <- tidy(cox_mod)
 
-fwrite(logit_summary, "data_adam/logit_summary.csv")
 fwrite(cox_summary, "data_adam/cox_summary.csv")
+fwrite(logit_summary, "app/data_adam/logit_summary.csv")
+fwrite(cox_summary, "app/data_adam/cox_summary.csv")
 
 # Save exposure with response and survival info for TLFs
-fwrite(exposure, "data_adam/exposure_full.csv")
+fwrite(exposure, "app/data_adam/exposure_full.csv")
 
 # End of script

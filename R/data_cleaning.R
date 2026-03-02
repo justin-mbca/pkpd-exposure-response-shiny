@@ -25,9 +25,12 @@ missing_lb <- qc_missing(lb)
 lb <- lb %>% mutate(OUTLIER = abs(LAB - mean(LAB)) > 3 * sd(LAB))
 
 # Save cleaned datasets
-fwrite(dm, "data_adam/dm_clean.csv")
 fwrite(ex, "data_adam/ex_clean.csv")
 fwrite(pc, "data_adam/pc_clean.csv")
 fwrite(lb, "data_adam/lb_clean.csv")
+fwrite(dm, "app/data_adam/dm_clean.csv")
+fwrite(ex, "app/data_adam/ex_clean.csv")
+fwrite(pc, "app/data_adam/pc_clean.csv")
+fwrite(lb, "app/data_adam/lb_clean.csv")
 
 # End of script
