@@ -1,0 +1,10 @@
+name: pkpd-exposure-response-shiny
+title:
+username: justin-zhang
+account: justin-zhang
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16798080
+bundleId: 11652194
+url: https://justin-zhang.shinyapps.io/pkpd-exposure-response-shiny/
+version: 1
