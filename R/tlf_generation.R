@@ -9,7 +9,7 @@ library(gt)
 library(survival)
 
 # Safety analysis
-ae <- fread("data_sdtm/ae.csv")
+ae <- fread("app/data_sdtm/ae.csv")
 
 exposure <- fread("data_adam/exposure_full.csv")
 dm <- fread("data_adam/dm_clean.csv")

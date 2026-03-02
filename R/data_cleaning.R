@@ -6,10 +6,10 @@ library(tidyverse)
 library(data.table)
 
 # Load SDTM datasets
-dm <- fread("data_sdtm/dm.csv")
-ex <- fread("data_sdtm/ex.csv")
-pc <- fread("data_sdtm/pc.csv")
-lb <- fread("data_sdtm/lb.csv")
+dm <- fread("app/data_sdtm/dm.csv")
+ex <- fread("app/data_sdtm/ex.csv")
+pc <- fread("app/data_sdtm/pc.csv")
+lb <- fread("app/data_sdtm/lb.csv")
 
 # Check for missing values
 qc_missing <- function(df) {

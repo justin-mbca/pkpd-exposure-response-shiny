@@ -51,10 +51,10 @@ ae <- dm %>% select(USUBJID, DOSE) %>%
   )
 
 # Save datasets
-fwrite(dm, "data_sdtm/dm.csv")
-fwrite(ex, "data_sdtm/ex.csv")
-fwrite(pc, "data_sdtm/pc.csv")
-fwrite(lb, "data_sdtm/lb.csv")
-fwrite(ae, "data_sdtm/ae.csv")
+fwrite(dm, "app/data_sdtm/dm.csv")
+fwrite(ex, "app/data_sdtm/ex.csv")
+fwrite(pc, "app/data_sdtm/pc.csv")
+fwrite(lb, "app/data_sdtm/lb.csv")
+fwrite(ae, "app/data_sdtm/ae.csv")
 
 # End of script
