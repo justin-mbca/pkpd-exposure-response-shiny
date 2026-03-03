@@ -1,3 +1,40 @@
+# ------------------------------------------------------------------------------
+# Quality Control (QC) Overview
+# ------------------------------------------------------------------------------
+# QC (Quality Control) in this project is performed using functions in R that check
+# the integrity and consistency of your data. The main steps include:
+#
+# - Checking for missing values in key columns using validate_missing_values(),
+#   which summarizes missing data per column.
+# - Identifying outliers in numeric columns with identify_outliers(), which uses
+#   the interquartile range (IQR) method to flag values outside expected ranges.
+# - Generating summary tables with generate_qc_summary(), which reports both
+#   missing values and outlier counts for specified columns.
+# - Validating data consistency between datasets (e.g., matching subject IDs)
+#   using validate_data_consistency(), which highlights discrepancies between key
+#   columns in different data frames.
+#
+# These QC routines help ensure your data is clean, complete, and ready for
+# analysis or reporting.
+# ------------------------------------------------------------------------------
+# qc_validation.R
+# ----------------
+# This script contains functions and procedures for quality control (QC) and validation of data used in the PK/PD exposure-response Shiny application.
+# It includes routines for checking data integrity, identifying missing or outlier values, and generating QC summary outputs for downstream analysis and reporting.
+#
+# Author: Justin Zhang
+# Date: March 2, 2026
+#
+# Functions in this file are intended to be sourced and used within the data processing and reporting pipeline.
+
+ 
+validate_missing_values <- function(df, columns) {
+ 
+identify_outliers <- function(df, columns, iqr_multiplier = 1.5) {
+ 
+generate_qc_summary <- function(df, columns) {
+
+validate_data_consistency <- function(df1, df2, key_columns) {
 # qc_validation.R
 # Automated QC validation checks
 # Author: Senior Clinical PK/PD R Developer

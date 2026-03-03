@@ -1,3 +1,19 @@
+# ------------------------------------------------------------------------------
+# TLF Generation Overview
+# ------------------------------------------------------------------------------
+# This script generates regulatory-style Tables, Listings, and Figures (TLFs) for
+# clinical PK/PD exposure-response analysis. The process includes:
+#
+# - Reading in cleaned and derived datasets (e.g., subject data, exposure, AE, model summaries).
+# - Creating figures such as boxplots (Cmax by dose), exposure-response scatter plots,
+#   Kaplan-Meier survival curves by exposure quartile, and forest plots of covariates.
+# - Generating safety figures (e.g., adverse event rates by dose and exposure quartile).
+# - Producing summary tables for logistic regression and Cox model results using the gt package.
+# - Saving all outputs (plots and tables) to the report/ directory for downstream reporting or submission.
+#
+# The script uses tidyverse, data.table, ggplot2, gt, and survival packages for data manipulation,
+# visualization, and table generation. All TLFs are created in a reproducible and automated manner.
+# ------------------------------------------------------------------------------
 # tlf_generation.R
 # Generate regulatory-style Tables, Listings, Figures (TLFs)
 # Author: Senior Clinical PK/PD R Developer

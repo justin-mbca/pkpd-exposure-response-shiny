@@ -6,5 +6,5 @@ server: rpubs.com
 hostUrl: rpubs.com
 appId: https://api.rpubs.com/api/v1/document/1404592/1edbdafc8faf4cef9a46a6893800a355
 bundleId: https://api.rpubs.com/api/v1/document/1404592/1edbdafc8faf4cef9a46a6893800a355
-url: http://rpubs.com/zhangju99/1404592/edit
+url: http://rpubs.com/zhangju99/1404592
 version: 1

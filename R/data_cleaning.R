@@ -2,6 +2,32 @@
 # Clean and QC raw/simulated data
 # Author: Senior Clinical PK/PD R Developer
 
+# In production, these datasets should be thoroughly cleaned before analysis.
+# See cleaning steps below for best practices and example code.
+
+# --- Production Cleaning Best Practices ---
+# For dm (Demographics):
+#   - Remove duplicate subjects:
+#       dm <- dm %>% distinct(SUBJID, .keep_all = TRUE)
+#   - Standardize categorical variables:
+#       dm <- dm %>% mutate(SEX = recode(SEX, "Male" = "M", "Female" = "F"))
+#   - Filter to analysis population, check for missing/implausible values, ensure unique IDs.
+# For ex (Exposure):
+#   - Remove records with missing/zero dose:
+#       ex <- ex %>% filter(!is.na(DOSE) & DOSE > 0)
+#   - Standardize dose units:
+#       ex <- ex %>% mutate(DOSE_UNIT = toupper(DOSE_UNIT))
+#   - Remove duplicates, check dosing times, align with PK if needed.
+# For pc (PK):
+#   - Remove missing/negative concentrations:
+#       pc <- pc %>% filter(!is.na(CONC) & CONC >= 0)
+#   - Standardize units, remove duplicates:
+#       pc <- pc %>% distinct(SUBJID, TIME, ANALYTE, .keep_all = TRUE)
+#   - Flag/remove outliers, check timepoints.
+#
+# The following code currently only checks for missing values and flags outliers in labs.
+# Extend as needed for full production cleaning.
+
 library(tidyverse)
 library(data.table)
 

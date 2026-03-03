@@ -1,6 +1,17 @@
+
 # modeling_exposure_response.R
 # Exposure-response modeling (logistic regression, Cox model)
 # Author: Senior Clinical PK/PD R Developer
+#
+# Documentation:
+# - exposure.csv: This file contains per-subject Cmax (maximum observed concentration) and AUC (area under the concentration-time curve),
+#   derived from pc_clean.csv using the linear trapezoidal rule (see derivations_exposure.R for details).
+#   Columns: USUBJID, Cmax, AUC.
+# - This script reads exposure.csv and dm_clean.csv, simulates response and survival data, and fits:
+#     * Logistic regression: RESPONSE ~ Cmax + AGE + SEX
+#     * Cox proportional hazards model: Surv(SURV_TIME, STATUS) ~ AUC + AGE + SEX
+# - Model summaries are saved as logit_summary.csv and cox_summary.csv in app/data_adam/.
+# - The exposure_full.csv file contains exposure metrics with simulated response and survival outcomes for further analysis and TLFs.
 
 library(tidyverse)
 library(data.table)
