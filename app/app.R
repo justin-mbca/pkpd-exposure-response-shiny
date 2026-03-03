@@ -9,8 +9,13 @@ library(data.table)
 library(survival)
 
 # Load data
+# Use paths relative to the app directory
 dm <- fread("data_adam/dm_clean.csv")
 exposure <- fread("data_adam/exposure_full.csv")
+# Ensure DOSE is present in exposure by joining from dm
+if (!"DOSE" %in% names(exposure)) {
+  exposure <- merge(exposure, dm[, .(USUBJID, DOSE)], by = "USUBJID", all.x = TRUE)
+}
 logit_summary <- fread("data_adam/logit_summary.csv")
 cox_summary <- fread("data_adam/cox_summary.csv")
 
@@ -20,7 +25,7 @@ ui <- fluidPage(
     column(
       width = 3,
       wellPanel(
-        selectInput("dose", "Dose Group", choices = unique(dm$DOSE), selected = unique(dm$DOSE), multiple = TRUE),
+        selectInput("dose", "Dose Group", choices = as.character(unique(dm$DOSE)), selected = as.character(unique(dm$DOSE)), multiple = TRUE),
         sliderInput("cmax", "Cmax Range", min = floor(min(exposure$Cmax)), max = ceiling(max(exposure$Cmax)), value = c(floor(min(exposure$Cmax)), ceiling(max(exposure$Cmax)))),
         sliderInput("auc", "AUC Range", min = floor(min(exposure$AUC)), max = ceiling(max(exposure$AUC)), value = c(floor(min(exposure$AUC)), ceiling(max(exposure$AUC)))),
         selectInput("subject", "Select Subject for AUC Plot", choices = unique(dm$USUBJID), selected = unique(dm$USUBJID)[1]),
@@ -184,7 +189,10 @@ server <- function(input, output, session) {
     dm %>% filter(DOSE %in% input$dose)
   })
   filtered_exposure <- reactive({
-    exposure %>% filter(Cmax >= input$cmax[1], Cmax <= input$cmax[2], AUC >= input$auc[1], AUC <= input$auc[2])
+    exposure %>%
+      filter(DOSE %in% input$dose,
+             Cmax >= input$cmax[1], Cmax <= input$cmax[2],
+             AUC >= input$auc[1], AUC <= input$auc[2])
   })
 
   output$table_dm <- DT::renderDataTable({
@@ -192,13 +200,13 @@ server <- function(input, output, session) {
   })
 
   output$boxplot_cmax <- renderPlot({
-    ggplot(left_join(filtered_exposure(), dm, by = "USUBJID"), aes(x = factor(DOSE), y = Cmax)) +
+    ggplot(exposure, aes(x = factor(DOSE), y = Cmax)) +
       geom_boxplot() +
       labs(title = "Cmax by Dose Group", x = "Dose", y = "Cmax")
   })
 
   output$scatter_er <- renderPlot({
-    ggplot(left_join(filtered_exposure(), dm, by = "USUBJID"), aes(x = Cmax, y = RESPONSE)) +
+    ggplot(filtered_exposure(), aes(x = Cmax, y = RESPONSE)) +
       geom_jitter(width = 0.1, height = 0.05) +
       labs(title = "Exposure-Response Scatter Plot", x = "Cmax", y = "Response")
   })
